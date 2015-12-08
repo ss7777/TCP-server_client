@@ -5,11 +5,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <unistd.h>    //write
-#include <arpa/inet.h> //inet_addr
+#include <unistd.h>    
+
 
 //the thread function
-void *connection_handler(void *);
+void *client_handler(void *);
 
 
 int main(int argc, char *argv[])
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	/* Accept */
 	while(1)
 	{	
-		//connection = (server *) malloc(sizeof(struct sockaddr_in));
+		
 		socklen_t connection = sizeof(client);
 
 		//mysock = accept(sock, (struct sockaddr *)&client, (socklen_t *)&connection);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		
 		else
 		{	/* start a new thread but do not wait for it */
-			pthread_create(&thread_id, NULL, connection_handler, (void *)&mysock);
+			pthread_create(&thread_id, NULL, client_handler, (void *)&mysock);
 			pthread_detach(thread_id);
 		}
 
@@ -83,8 +83,11 @@ int main(int argc, char *argv[])
 }
 
 
-void *connection_handler(void *mysock)
-{	puts("Handler assigned");
+void *client_handler(void *mysock)
+{	
+
+	puts("Handler assigned");
+    
     //Get the socket descriptor
     int read_size;
     int sock_desk = *(int*)mysock;
@@ -93,10 +96,10 @@ void *connection_handler(void *mysock)
     
 
     //Send some messages to the client
-    message = "Greetings! I am your connection handler\n";
+    message = "connection handler is ready\n";
     write(sock_desk , message , strlen(message));
      
-    message = "Now type something and i shall repeat what you type \n";
+    message = "server will repeat client message \n";
     write(sock_desk , message , strlen(message));
      
     //Receive a message from client
